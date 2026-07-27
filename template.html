@@ -1,0 +1,638 @@
+<title>어린이 추천도서 큐레이션 · 유치원~초등</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+  /* ============================================================
+     어린이 추천도서 200선 — Apple-inspired minimal redesign
+     Design tokens → base → hero → toolbar → sections → cards
+     ============================================================ */
+
+  /* ---- Design tokens (light) ---- */
+  :root{
+    color-scheme: light dark;
+
+    /* Neutrals — slightly cool, never pure grey */
+    --bg:        #f5f5f7;
+    --surface:   #ffffff;
+    --surface-2: #fbfbfd;
+    --text:      #1d1d1f;
+    --text-2:    #4b4b4f;
+    --text-3:    #86868b;
+    --border:    #e6e6ea;
+    --border-2:  #d6d6db;
+
+    /* Accents */
+    --blue:      #0071e3;   /* 서점 */
+    --blue-weak: #eaf2fd;
+    --indigo:    #5e5ce6;   /* 도서관 */
+    --indigo-weak:#ecebfd;
+    --star:      #c48a12;
+    --edu:       #1c8a4e;
+
+    /* Elevation & shape */
+    --shadow-1: 0 1px 2px rgba(0,0,0,.04), 0 6px 16px rgba(0,0,0,.05);
+    --shadow-2: 0 10px 24px rgba(0,0,0,.09), 0 20px 48px rgba(0,0,0,.11);
+    --r-sm: 10px;
+    --r:    16px;
+    --r-lg: 22px;
+    --ease: cubic-bezier(.4, 0, .2, 1);
+
+    --font: 'Pretendard','Apple SD Gothic Neo','SF Pro Text',-apple-system,
+            BlinkMacSystemFont,'Malgun Gothic','Noto Sans KR',system-ui,sans-serif;
+  }
+
+  /* ---- Design tokens (dark) ---- */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:        #000000;
+      --surface:   #1c1c1e;
+      --surface-2: #2c2c2e;
+      --text:      #f5f5f7;
+      --text-2:    #c7c7cc;
+      --text-3:    #8e8e93;
+      --border:    #38383a;
+      --border-2:  #48484a;
+      --blue:      #2997ff;
+      --blue-weak: #10314f;
+      --indigo:    #8a88ff;
+      --indigo-weak:#26254d;
+      --star:      #e0b73c;
+      --edu:       #43c47f;
+      --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 6px 16px rgba(0,0,0,.4);
+      --shadow-2: 0 10px 24px rgba(0,0,0,.55), 0 20px 48px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f5f7; --surface:#ffffff; --surface-2:#fbfbfd;
+    --text:#1d1d1f; --text-2:#4b4b4f; --text-3:#86868b;
+    --border:#e6e6ea; --border-2:#d6d6db;
+    --blue:#0071e3; --blue-weak:#eaf2fd; --indigo:#5e5ce6; --indigo-weak:#ecebfd;
+    --star:#c48a12; --edu:#1c8a4e;
+    --shadow-1:0 1px 2px rgba(0,0,0,.04), 0 6px 16px rgba(0,0,0,.05);
+    --shadow-2:0 10px 24px rgba(0,0,0,.09), 0 20px 48px rgba(0,0,0,.11);
+  }
+  :root[data-theme="dark"]{
+    --bg:#000000; --surface:#1c1c1e; --surface-2:#2c2c2e;
+    --text:#f5f5f7; --text-2:#c7c7cc; --text-3:#8e8e93;
+    --border:#38383a; --border-2:#48484a;
+    --blue:#2997ff; --blue-weak:#10314f; --indigo:#8a88ff; --indigo-weak:#26254d;
+    --star:#e0b73c; --edu:#43c47f;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4), 0 6px 16px rgba(0,0,0,.4);
+    --shadow-2:0 10px 24px rgba(0,0,0,.55), 0 20px 48px rgba(0,0,0,.6);
+  }
+
+  /* ---- Base ---- */
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font);
+    font-size:16px;
+    line-height:1.6;
+    letter-spacing:-.014em;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+
+  .wrap{
+    max-width:1200px;
+    margin-inline:auto;
+    padding:clamp(24px,5vw,64px) clamp(16px,4vw,40px) 96px;
+  }
+
+  /* ============================================================
+     Hero
+     ============================================================ */
+  .hero{ text-align:center; margin-bottom:clamp(32px,5vw,56px); }
+  .eyebrow{
+    display:inline-block;
+    font-size:12px; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--blue);
+    margin-bottom:16px;
+  }
+  h1{
+    margin:0 0 18px;
+    font-size:clamp(30px,6vw,52px);
+    font-weight:700; line-height:1.08; letter-spacing:-.03em;
+    text-wrap:balance;
+  }
+  .lede{
+    max-width:60ch; margin:0 auto;
+    color:var(--text-2); font-size:clamp(15px,1.8vw,18px); line-height:1.6;
+    text-wrap:pretty;
+  }
+  /* 대상 표시 */
+  .target{
+    display:inline-flex; align-items:center; gap:10px;
+    margin-top:20px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:999px; padding:8px 18px; box-shadow:var(--shadow-1);
+    font-size:14px; font-weight:600; color:var(--text);
+  }
+  .target > b{
+    font-size:11.5px; font-weight:700; letter-spacing:.06em; color:var(--text-3);
+    padding-right:10px; border-right:1px solid var(--border);
+  }
+
+  /* Stat tiles */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    max-width:560px;
+    margin:clamp(28px,4vw,40px) auto 0;
+  }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:18px 12px;
+    box-shadow:var(--shadow-1);
+    display:flex; flex-direction:column; gap:4px; align-items:center;
+  }
+  .stat-n{ font-size:28px; font-weight:700; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+  .stat-l{ font-size:12.5px; color:var(--text-3); font-weight:500; }
+
+  /* ============================================================
+     Notice card
+     ============================================================ */
+  .notice{
+    display:flex; gap:12px; align-items:flex-start;
+    background:var(--blue-weak);
+    border:1px solid transparent;
+    border-radius:var(--r);
+    padding:16px 18px;
+    margin-bottom:20px;
+    font-size:13.5px; line-height:1.55; color:var(--text-2);
+  }
+  .notice .dot{
+    flex:0 0 auto; width:22px; height:22px; border-radius:50%;
+    background:var(--blue); color:#fff;
+    display:grid; place-items:center; font-weight:700; font-size:13px; margin-top:1px;
+  }
+  .notice b{ color:var(--text); font-weight:600; }
+
+  /* ============================================================
+     Toolbar (sticky control card)
+     ============================================================ */
+  .controls{
+    position:static;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow-1);
+    padding:16px;
+    margin-bottom:32px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+
+  /* Segmented control (source) */
+  .srcbar{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:4px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:4px;
+  }
+  .srcbtn{
+    appearance:none; border:0; cursor:pointer; font-family:inherit;
+    background:transparent; color:var(--text-3);
+    border-radius:10px; padding:9px 6px;
+    display:flex; flex-direction:column; align-items:center; gap:1px;
+    transition:background .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .srcbtn b{ font-size:14px; font-weight:600; color:inherit; letter-spacing:-.01em; }
+  .srcbtn span{ font-size:11px; font-weight:500; opacity:.8; }
+  .srcbtn:hover{ color:var(--text-2); }
+  .srcbtn[aria-pressed="true"]{ background:var(--surface); box-shadow:var(--shadow-1); }
+  .srcbtn[data-src="store"][aria-pressed="true"]{ color:var(--blue); }
+  .srcbtn[data-src="lib"][aria-pressed="true"]{ color:var(--indigo); }
+  .srcbtn[data-src="all"][aria-pressed="true"]{ color:var(--text); }
+  .srcbtn:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  /* Search + select row */
+  .searchbox{
+    width:100%;
+    padding:11px 15px;
+    border:1px solid var(--border-2);
+    border-radius:12px;
+    background:var(--surface-2);
+    color:var(--text);
+    font:inherit; font-size:15px;
+    transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .searchbox::placeholder{ color:var(--text-3); }
+  .searchbox:focus{
+    outline:none; border-color:var(--blue);
+    box-shadow:0 0 0 4px color-mix(in srgb, var(--blue) 18%, transparent);
+  }
+
+  .fbar{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .flabel{
+    flex:0 0 auto; font-size:12px; font-weight:600;
+    letter-spacing:.02em; color:var(--text-3);
+  }
+  .selectbox{
+    flex:1; min-width:180px; max-width:340px;
+    padding:10px 40px 10px 14px;
+    border:1px solid var(--border-2); border-radius:12px;
+    background-color:var(--surface-2); color:var(--text);
+    font:inherit; font-size:14px; font-weight:600; cursor:pointer;
+    appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 13px center;
+    transition:border-color .2s var(--ease);
+  }
+  .selectbox:focus{ outline:none; border-color:var(--blue);
+    box-shadow:0 0 0 4px color-mix(in srgb, var(--blue) 18%, transparent); }
+  .selectbox optgroup{ font-weight:700; color:var(--text-3); }
+  .selectbox option{ font-weight:500; color:var(--text); background:var(--surface); }
+
+  /* Category chips */
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    appearance:none; cursor:pointer; font-family:inherit;
+    border:1px solid var(--border-2); background:var(--surface-2);
+    color:var(--text-2); font-size:13px; font-weight:500;
+    padding:6px 13px; border-radius:999px;
+    transition:all .2s var(--ease);
+  }
+  .chip:hover{ color:var(--text); border-color:var(--text-3); }
+  .chip[aria-pressed="true"]{ background:var(--text); color:var(--bg); border-color:var(--text); }
+  .chip:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  .count{ font-size:13px; color:var(--text-3); }
+  .count b{ color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  /* ============================================================
+     Section headers
+     ============================================================ */
+  .sec{ margin-bottom:clamp(36px,5vw,56px); }
+  .sec-head{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .sec-head h2{
+    margin:0; font-size:clamp(22px,3vw,28px); font-weight:700; letter-spacing:-.025em;
+  }
+  .sec-head .tag{
+    font-size:12px; font-weight:600; padding:4px 11px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text-2);
+  }
+  .sec-head p{
+    width:100%; margin:0; color:var(--text-3); font-size:14px;
+  }
+
+  /* ============================================================
+     Card grid — mobile first
+     ============================================================ */
+  .grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:600px){
+    .grid{ grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); }
+  }
+
+  .card{
+    position:relative;
+    display:flex; gap:16px; align-items:flex-start;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:18px;
+    box-shadow:var(--shadow-1);
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-2);
+    border-color:var(--border-2);
+  }
+
+  .c-body{ display:flex; flex-direction:column; gap:9px; min-width:0; flex:1; }
+
+  /* Cover */
+  .c-cover{
+    position:relative; flex:0 0 100px; width:100px; height:144px;
+    border-radius:12px; overflow:hidden;
+    background:linear-gradient(150deg, var(--surface-2), var(--border));
+    display:grid; place-items:center;
+    box-shadow:0 4px 12px rgba(0,0,0,.12);
+  }
+  .c-cover img{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; background:#fff;
+    transition:transform .4s var(--ease);
+  }
+  .card:hover .c-cover img{ transform:scale(1.05); }
+  .c-cover .ph{
+    display:none; padding:10px 8px;
+    font-size:11.5px; font-weight:600; color:var(--text-3);
+    text-align:center; line-height:1.4; word-break:keep-all;
+  }
+  .c-cover.noimg .ph{ display:block; }
+
+  /* Rank badge (도서 순위) — 카드 오른쪽 상단 */
+  .c-rank{
+    flex:0 0 auto; align-self:flex-start;
+    min-width:30px; height:27px; padding:0 9px;
+    display:grid; place-items:center;
+    font-size:14px; font-weight:800; letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;
+    color:var(--bg); background:var(--text);
+    border-radius:8px;
+  }
+  .c-rank.top{
+    color:#4a3500;
+    background:linear-gradient(145deg,#ffe08a,#f2b23a);
+    box-shadow:0 2px 8px rgba(214,158,46,.5);
+  }
+
+  /* Title row */
+  .c-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .c-title{
+    flex:1; min-width:0;
+    margin:0; font-size:17px; font-weight:700; line-height:1.3; letter-spacing:-.02em;
+  }
+  .c-idx{
+    flex:0 0 auto; font-size:12px; font-weight:600; color:var(--text-3);
+    font-variant-numeric:tabular-nums; padding-top:3px;
+  }
+  .c-author{ margin:-3px 0 0; font-size:13px; color:var(--text-3); }
+  .c-author b{ color:var(--text-2); font-weight:600; }
+
+  /* Badges */
+  .badges{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:2px 0; }
+  .b{
+    font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:7px;
+    letter-spacing:-.01em; line-height:1.5;
+  }
+  .b-cat{ background:var(--cat-bg, #eee); color:var(--cat-fg, #333); }
+  .b-age{ background:var(--surface-2); border:1px solid var(--border); color:var(--text-3); }
+  .b-src-store{ background:var(--blue-weak); color:var(--blue); }
+  .b-src-lib{ background:var(--indigo-weak); color:var(--indigo); }
+  .stars{ margin-left:auto; font-size:12.5px; letter-spacing:1px; color:var(--star); }
+
+  .c-why{ margin:2px 0 0; font-size:13.5px; line-height:1.55; color:var(--text-2); }
+  .c-isbn{
+    margin:0; font-size:11.5px; color:var(--text-3);
+    font-variant-numeric:tabular-nums; letter-spacing:.02em;
+  }
+  .c-isbn b{ color:var(--text-2); font-weight:600; }
+  .c-edu{
+    margin:0; padding-top:9px; border-top:1px solid var(--border);
+    font-size:12.5px; color:var(--text-3);
+  }
+  .c-edu b{ color:var(--edu); font-weight:600; }
+
+  /* Store links */
+  .stores{ display:flex; gap:7px; margin-top:11px; flex-wrap:wrap; }
+  .stores a{
+    flex:1; min-width:72px; text-align:center; text-decoration:none;
+    font-size:12px; font-weight:600; color:var(--text-2);
+    padding:8px 6px; border-radius:10px;
+    border:1px solid var(--border-2); background:var(--surface-2);
+    transition:all .2s var(--ease);
+  }
+  .stores a:hover{
+    color:#fff; background:var(--blue); border-color:var(--blue);
+    transform:translateY(-1px);
+  }
+  .stores a:focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  /* ============================================================
+     Footer & empty state
+     ============================================================ */
+  .empty{
+    grid-column:1 / -1; text-align:center; color:var(--text-3);
+    padding:56px 20px; font-size:14.5px;
+  }
+  footer{
+    margin-top:24px; padding-top:28px; border-top:1px solid var(--border);
+    font-size:12.5px; line-height:1.7; color:var(--text-3);
+  }
+  footer b{ color:var(--text-2); }
+  footer a{ color:var(--blue); text-decoration:none; }
+  footer a:hover{ text-decoration:underline; }
+
+  /* ============================================================
+     Responsive & motion
+     ============================================================ */
+  @media (min-width:520px){ .stats{ grid-template-columns:repeat(4,1fr); } }
+  @media (max-width:400px){
+    .c-cover{ flex-basis:82px; width:82px; height:118px; }
+    .card{ padding:15px; gap:13px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ transition:none !important; animation:none !important; }
+    .card:hover{ transform:none; }
+    .card:hover .c-cover img{ transform:none; }
+  }
+
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">독서교육 큐레이션 · 2025–2026</p>
+    <h1>유치원생·초등학생<br>추천도서 200선</h1>
+    <p class="lede"><b>서점 추천</b>(교보문고·YES24·알라딘 인기 순위)과 <b>도서관 추천</b>(사서·학교도서관저널·어린이도서연구회 권장)으로 나누어, 각 출처마다 연령별 50권씩 엄선했습니다.</p>
+    <p class="target"><b>대상</b>유치원생(전체) · 초등학생(전체)</p>
+    <div class="stats">
+      <div class="stat"><span class="stat-n">200</span><span class="stat-l">전체 도서</span></div>
+      <div class="stat"><span class="stat-n">100</span><span class="stat-l">🏬 서점 추천</span></div>
+      <div class="stat"><span class="stat-n">100</span><span class="stat-l">📚 도서관 추천</span></div>
+      <div class="stat"><span class="stat-n">8</span><span class="stat-l">분야</span></div>
+    </div>
+  </header>
+
+  <div class="notice">
+    <span class="dot">i</span>
+    <div>아래 <b>🏬 서점 추천 / 📚 도서관 추천</b> 버튼으로 목록을 바꿔 볼 수 있습니다. <b>표지·ISBN</b>은 알라딘 도서 정보에서 자동으로 넣었으며(인터넷 연결 시 표지 표시), 개정판·세트 구성에 따라 실제 상품과 다를 수 있으니 <b>가격·재고·최종 구매</b>는 서점에서 도서명으로 검색해 확인하세요.</div>
+  </div>
+
+  <div class="controls">
+    <div class="srcbar" id="srcBar" role="group" aria-label="추천 출처 선택">
+      <button class="srcbtn" data-src="store" aria-pressed="true"><b>🏬 서점 추천</b><span>베스트셀러 100권</span></button>
+      <button class="srcbtn" data-src="lib" aria-pressed="false"><b>📚 도서관 추천</b><span>사서·연구회 100권</span></button>
+      <button class="srcbtn" data-src="all" aria-pressed="false"><b>전체 보기</b><span>200권</span></button>
+    </div>
+    <input id="q" class="searchbox" type="search" placeholder="🔍 도서명·저자 검색" aria-label="도서명 또는 저자 검색">
+    <div class="fbar">
+      <label class="flabel" for="ageSelect">연령 선택</label>
+      <select id="ageSelect" class="selectbox" aria-label="연령 선택">
+        <option value="all">전체 연령 (만 4~12세)</option>
+        <optgroup label="── 묶음으로 보기 ──">
+          <option value="유아">유치원 전체 (만 4~7세)</option>
+          <option value="초등">초등 전체 (만 8~12세)</option>
+        </optgroup>
+        <optgroup label="── 만 나이로 콕 집어보기 ──">
+          <option value="4">만 4세</option>
+          <option value="5">만 5세</option>
+          <option value="6">만 6세</option>
+          <option value="7">만 7세</option>
+          <option value="8">만 8세</option>
+          <option value="9">만 9세</option>
+          <option value="10">만 10세</option>
+          <option value="11">만 11세</option>
+          <option value="12">만 12세</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="fbar">
+      <span class="flabel">분야 선택</span>
+      <div class="chips" id="catChips" role="group" aria-label="분야 선택"></div>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <section class="sec sec-yuA" id="sec-yuA">
+    <div class="sec-head">
+      <h2>유치원생 추천</h2><span class="tag">유치원생(전체) · 만 4~7세</span>
+      <p>그림책·창작동화 중심으로 감정·언어·상상력을 키우는 책들.</p>
+    </div>
+    <div class="grid" id="grid-yuA"></div>
+  </section>
+
+  <section class="sec sec-cho" id="sec-cho">
+    <div class="sec-head">
+      <h2>초등학생 추천</h2><span class="tag">초등학생(전체) · 만 8~12세</span>
+      <p>창작동화부터 역사·과학·수학·사회, 인성 성장 문학까지 폭넓게 구성했습니다.</p>
+    </div>
+    <div class="grid" id="grid-cho"></div>
+  </section>
+
+  <p class="empty" id="globalEmpty" style="display:none">선택한 조건에 맞는 책이 없어요. 연령이나 분야 버튼을 다시 골라 보세요.</p>
+
+  <footer>
+    <p><b>선정 근거</b> · 교보문고/YES24/알라딘 주간·연간 베스트셀러, 국립어린이청소년도서관 사서추천도서, 학교도서관저널 추천도서, 어린이도서연구회 권장목록, 2026 교과수록도서 목록을 교차 참고했습니다.</p>
+    <p><b>인기도 ★</b>는 판매 순위·수상 이력·스테디셀러 지속성을 종합한 상대 지표입니다. 가격과 재고, 개정판 여부는 변동되므로 구매 전 서점 링크에서 최종 확인하세요.</p>
+    <p style="margin-top:10px">출처: <a href="https://store.kyobobook.co.kr/bestseller/total/weekly">교보문고 베스트</a> · <a href="https://www.kidshankook.kr/news/articleView.html?idxno=13462">YES24 어린이 베스트(소년한국일보)</a> · <a href="https://www.aladin.co.kr/shop/wbrowse.aspx?CID=167662">알라딘 저학년 권장도서</a> · <a href="https://nlcy.go.kr">국립어린이청소년도서관</a></p>
+  </footer>
+</div>
+
+<script>
+const CAT = {
+  '그림책':  ['#EEE9FB','#6E56C7'],
+  '창작동화':['#E4F0FB','#2B6CB0'],
+  '인성':   ['#FBEAE6','#C05540'],
+  '과학':   ['#E4F3EA','#2F855A'],
+  '역사':   ['#F6EEDD','#9A6B12'],
+  '수학':   ['#E8ECFB','#4358B8'],
+  '사회':   ['#F7E9F2','#A2447F'],
+  '영어':   ['#FCE8EA','#C43D4E']
+};
+const BOOKS = /*__BOOKS__*/{};
+// 유치원 30
+// 초등 30
+
+const grpYuA = document.getElementById('grid-yuA');
+const grpCho = document.getElementById('grid-cho');
+function stores(t,a){
+  const q=encodeURIComponent(t+' '+a);
+  return `<div class="stores">
+    <a href="https://search.kyobobook.co.kr/search?keyword=${q}" target="_blank" rel="noopener">교보문고</a>
+    <a href="https://www.yes24.com/Product/Search?domain=BOOK&query=${q}" target="_blank" rel="noopener">YES24</a>
+    <a href="https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=Book&SearchWord=${q}" target="_blank" rel="noopener">알라딘</a>
+  </div>`;
+}
+function starStr(n){return '★'.repeat(n)+'☆'.repeat(5-n);}
+const COVERS = /*__COVERS__*/{};
+function esc(s){return String(s).replace(/"/g,'&quot;');}
+function coverHTML(t,info){
+  const ph=`<span class="ph">${t}</span>`;
+  if(info&&info.img){
+    return `<div class="c-cover"><img loading="lazy" src="${esc(info.img)}" alt="${esc(t)} 표지"
+      onerror="this.closest('.c-cover').classList.add('noimg');this.remove();">${ph}</div>`;
+  }
+  return `<div class="c-cover noimg">${ph}</div>`;
+}
+function card(b,group,source,i){
+  const [t,a,pub,age,cat,rate,why,edu]=b;
+  const [bg,fg]=CAT[cat]||['#eee','#333'];
+  const el=document.createElement('article');
+  el.className='card g-'+group+' s-'+source;
+  el.dataset.age=group; el.dataset.cat=cat; el.dataset.source=source;
+  const nums=(age.match(/\d+/g)||[]).map(Number);
+  el.dataset.agemin=nums[0]; el.dataset.agemax=nums.length>1?nums[1]:nums[0];
+  el.dataset.search=(t+' '+a).toLowerCase();
+  const info=COVERS[t]||{};
+  el.innerHTML=`
+    ${coverHTML(t,info)}
+    <div class="c-body">
+      <div class="c-top">
+        <h3 class="c-title">${t}</h3>
+        <span class="c-rank${i+1<=3?' top':''}" title="${i+1}위">${i+1}</span>
+      </div>
+      <p class="c-author">글·저자 <b>${a}</b> · ${pub}</p>
+      <div class="badges">
+        <span class="b b-src b-src-${source}">${source==='store'?'🏬 서점':'📚 도서관'}</span>
+        <span class="b b-cat" style="--cat-bg:${bg};--cat-fg:${fg}">${cat}</span>
+        <span class="b b-age">추천 ${age}</span>
+        <span class="stars" title="인기도 ${rate}/5">${starStr(rate)}</span>
+      </div>
+      <p class="c-why">${why}</p>
+      ${info.isbn?`<p class="c-isbn"><b>ISBN</b> ${info.isbn.toUpperCase()}</p>`:''}
+      <p class="c-edu"><b>교육효과</b> · ${edu}</p>
+    </div>`;
+  return el;
+}
+// 도서관 추천 · 유치원 30 (문학성·수상작·연구회 권장)
+// 도서관 추천 · 초등 30
+// === 확장(200선): 서점/도서관 각 연령 +25권 ===
+BOOKS.store['유아'].forEach((b,i)=>grpYuA.appendChild(card(b,'유아','store',i)));
+BOOKS.lib['유아'].forEach((b,i)=>grpYuA.appendChild(card(b,'유아','lib',i)));
+BOOKS.store['초등'].forEach((b,i)=>grpCho.appendChild(card(b,'초등','store',i)));
+BOOKS.lib['초등'].forEach((b,i)=>grpCho.appendChild(card(b,'초등','lib',i)));
+
+// category chips
+const cats=Object.keys(CAT);
+const catWrap=document.getElementById('catChips');
+catWrap.innerHTML='<button class="chip" data-cat="all" aria-pressed="true">전체 분야</button>'+
+  cats.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="false">${c}</button>`).join('');
+
+let fSource='store', fAge='all', fCat='all', fQ='';
+const cards=[...document.querySelectorAll('.card')];
+const secY=document.getElementById('sec-yuA'), secC=document.getElementById('sec-cho');
+const countEl=document.getElementById('count');
+
+function apply(){
+  let ny=0,nc=0;
+  cards.forEach(c=>{
+    const okSrc=fSource==='all'||c.dataset.source===fSource;
+    let okAge;
+    if(fAge==='all') okAge=true;
+    else if(fAge==='유아'||fAge==='초등') okAge=(c.dataset.age===fAge);
+    else { const n=+fAge; okAge=(n>=+c.dataset.agemin && n<=+c.dataset.agemax); }
+    const okCat=fCat==='all'||c.dataset.cat===fCat;
+    const okQ=!fQ||c.dataset.search.includes(fQ);
+    const show=okSrc&&okAge&&okCat&&okQ;
+    c.style.display=show?'':'none';
+    if(show){c.dataset.age==='유아'?ny++:nc++;}
+  });
+  // 조건에 맞는 책이 있는 섹션만 보여준다
+  secY.style.display=(ny>0)?'':'none';
+  secC.style.display=(nc>0)?'':'none';
+  document.getElementById('globalEmpty').style.display=(ny+nc===0)?'':'none';
+  const srcName = fSource==='store'?'🏬 서점 추천':(fSource==='lib'?'📚 도서관 추천':'서점+도서관 전체');
+  const ageName = /^\d+$/.test(fAge) ? ` · 만 ${fAge}세` : '';
+  countEl.innerHTML=`${srcName}${ageName} · 유치원 <b>${ny}</b>권 · 초등 <b>${nc}</b>권`;
+}
+document.getElementById('srcBar').addEventListener('click',e=>{
+  const b=e.target.closest('.srcbtn'); if(!b)return;
+  fSource=b.dataset.src;
+  [...b.parentNode.children].forEach(x=>x.setAttribute('aria-pressed',x===b));
+  apply();
+});
+document.getElementById('ageSelect').addEventListener('change',e=>{fAge=e.target.value;apply();});
+catWrap.addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  fCat=b.dataset.cat;
+  [...catWrap.children].forEach(x=>x.setAttribute('aria-pressed',x===b));
+  apply();
+});
+document.getElementById('q').addEventListener('input',e=>{fQ=e.target.value.trim().toLowerCase();apply();});
+apply();
+</script>
