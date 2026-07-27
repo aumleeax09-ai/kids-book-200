@@ -246,7 +246,7 @@
   .card.is-read .c-cover{ opacity:.7; }
   .card.is-read .c-title{ color:var(--text-2); }
   /* 읽은 책 보기 바 */
-  .readbar{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding-top:12px; border-top:1px dashed var(--border-2); }
+  .readbar{ display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-wrap:wrap; }
   .readtoggle{ appearance:none; cursor:pointer; font-family:inherit; border:1.5px solid var(--mint);
     background:#fff; color:var(--mint); font-size:13px; font-weight:800; padding:8px 16px; border-radius:999px; transition:all .2s var(--ease); }
   .readtoggle:hover{ background:var(--mint-soft); }
@@ -289,6 +289,11 @@
   </header>
 
   <div class="controls">
+    <div class="readbar">
+      <button class="readtoggle" id="readToggle" aria-pressed="false">📗 읽은 책만 보기</button>
+      <span class="readcount" id="readCount"></span>
+      <button class="readclear" id="readClear" hidden>모두 해제</button>
+    </div>
     <div class="srcbar" id="srcBar" role="group" aria-label="추천 출처 선택">
       <button class="srcbtn" data-src="store" aria-pressed="true"><b>🏬 서점 추천</b><span>베스트셀러 200권</span></button>
       <button class="srcbtn" data-src="lib" aria-pressed="false"><b>📚 도서관 추천</b><span>사서·연구회 200권</span></button>
@@ -321,11 +326,6 @@
       <div class="chips" id="catChips" role="group" aria-label="분야 선택"></div>
     </div>
     <div class="count" id="count"></div>
-    <div class="readbar">
-      <button class="readtoggle" id="readToggle" aria-pressed="false">📗 읽은 책만 보기</button>
-      <span class="readcount" id="readCount"></span>
-      <button class="readclear" id="readClear" hidden>모두 해제</button>
-    </div>
   </div>
 
   <section class="sec sec-yuA" id="sec-yuA">
