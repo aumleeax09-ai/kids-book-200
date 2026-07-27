@@ -232,6 +232,26 @@
   .c-edu{ margin:0; padding-top:10px; border-top:1px dashed var(--border-2); font-size:12.5px; color:var(--text-3); }
   .c-edu b{ color:var(--mint); font-weight:800; }
 
+  /* 읽음 체크 */
+  .c-read{ flex:0 0 auto; appearance:none; cursor:pointer; font-family:inherit;
+    border:1.5px solid var(--border-2); background:#fff; color:var(--text-3);
+    font-size:11.5px; font-weight:800; padding:4px 11px; border-radius:999px; transition:all .18s var(--ease); }
+  .c-read:hover{ border-color:var(--mint); color:var(--mint); }
+  .c-read[aria-pressed="true"]{ background:var(--mint); border-color:var(--mint); color:#fff; }
+  .card.is-read{ background:var(--mint-soft); border-color:var(--mint); }
+  .card.is-read .c-cover{ opacity:.7; }
+  .card.is-read .c-title{ color:var(--text-2); }
+  /* 읽은 책 보기 바 */
+  .readbar{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding-top:12px; border-top:1px dashed var(--border-2); }
+  .readtoggle{ appearance:none; cursor:pointer; font-family:inherit; border:1.5px solid var(--mint);
+    background:#fff; color:var(--mint); font-size:13px; font-weight:800; padding:8px 16px; border-radius:999px; transition:all .2s var(--ease); }
+  .readtoggle:hover{ background:var(--mint-soft); }
+  .readtoggle[aria-pressed="true"]{ background:var(--mint); color:#fff; box-shadow:0 4px 12px rgba(15,185,163,.35); }
+  .readcount{ font-size:13px; color:var(--text-3); font-weight:600; }
+  .readcount b{ color:var(--mint); font-weight:800; font-variant-numeric:tabular-nums; }
+  .readclear{ appearance:none; cursor:pointer; font-family:inherit; border:0; background:none;
+    color:var(--text-3); font-size:12px; text-decoration:underline; padding:4px; }
+
   /* 빈 상태 · 푸터 */
   .empty{ grid-column:1/-1; text-align:center; color:var(--text-3); padding:56px 20px; font-size:14.5px; }
   footer{ margin-top:24px; padding-top:28px; border-top:1px solid var(--border); font-size:12.5px; line-height:1.7; color:var(--text-3); }
@@ -295,6 +315,11 @@
       <div class="chips" id="catChips" role="group" aria-label="분야 선택"></div>
     </div>
     <div class="count" id="count"></div>
+    <div class="readbar">
+      <button class="readtoggle" id="readToggle" aria-pressed="false">📗 읽은 책만 보기</button>
+      <span class="readcount" id="readCount"></span>
+      <button class="readclear" id="readClear" hidden>모두 해제</button>
+    </div>
   </div>
 
   <section class="sec sec-yuA" id="sec-yuA">
@@ -368,7 +393,8 @@ function card(b,group,source,i){
   const [bg,fg]=CAT[cat]||['#eee','#333'];
   const el=document.createElement('article');
   el.className='card g-'+group+' s-'+source;
-  el.dataset.age=group; el.dataset.cat=cat; el.dataset.source=source;
+  el.dataset.age=group; el.dataset.cat=cat; el.dataset.source=source; el.dataset.title=t;
+  if(READ.has(t)) el.classList.add('is-read');
   const nums=(age.match(/\d+/g)||[]).map(Number);
   el.dataset.agemin=nums[0]; el.dataset.agemax=nums.length>1?nums[1]:nums[0];
   el.dataset.search=(t+' '+a).toLowerCase();
@@ -378,6 +404,7 @@ function card(b,group,source,i){
     <div class="c-body">
       <div class="c-top">
         <h3 class="c-title">${t}</h3>
+        <button class="c-read" aria-pressed="${READ.has(t)?'true':'false'}" title="읽었어요 체크">${READ.has(t)?'✓ 읽음':'읽음'}</button>
         <span class="c-rank${i+1<=3?' top':''}" title="${i+1}위">${i+1}</span>
       </div>
       <p class="c-author">글·저자 <b>${a}</b> · ${pub}</p>
@@ -395,6 +422,9 @@ function card(b,group,source,i){
 // 도서관 추천 · 유치원 30 (문학성·수상작·연구회 권장)
 // 도서관 추천 · 초등 30
 // === 확장(200선): 서점/도서관 각 연령 +25권 ===
+// 읽은 책 (브라우저에 저장되어 다시 열어도 유지)
+let READ; try{ READ=new Set(JSON.parse(localStorage.getItem('kb_read')||'[]')); }catch(e){ READ=new Set(); }
+function saveRead(){ try{ localStorage.setItem('kb_read', JSON.stringify([...READ])); }catch(e){} }
 BOOKS.store['유아'].forEach((b,i)=>grpYuA.appendChild(card(b,'유아','store',i)));
 BOOKS.lib['유아'].forEach((b,i)=>grpYuA.appendChild(card(b,'유아','lib',i)));
 BOOKS.store['초등'].forEach((b,i)=>grpCho.appendChild(card(b,'초등','store',i)));
@@ -406,7 +436,7 @@ const catWrap=document.getElementById('catChips');
 catWrap.innerHTML='<button class="chip" data-cat="all" aria-pressed="true">전체 분야</button>'+
   cats.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="false">${c}</button>`).join('');
 
-let fSource='store', fAge='all', fCat='all', fQ='';
+let fSource='store', fAge='all', fCat='all', fQ='', fRead=false;
 const cards=[...document.querySelectorAll('.card')];
 const secY=document.getElementById('sec-yuA'), secC=document.getElementById('sec-cho');
 const countEl=document.getElementById('count');
@@ -421,7 +451,8 @@ function apply(){
     else { const n=+fAge; okAge=(n>=+c.dataset.agemin && n<=+c.dataset.agemax); }
     const okCat=fCat==='all'||c.dataset.cat===fCat;
     const okQ=!fQ||c.dataset.search.includes(fQ);
-    const show=okSrc&&okAge&&okCat&&okQ;
+    const okRead=!fRead||READ.has(c.dataset.title);
+    const show=okSrc&&okAge&&okCat&&okQ&&okRead;
     c.style.display=show?'':'none';
     if(show){c.dataset.age==='유아'?ny++:nc++;}
   });
@@ -447,7 +478,27 @@ catWrap.addEventListener('click',e=>{
   apply();
 });
 document.getElementById('q').addEventListener('input',e=>{fQ=e.target.value.trim().toLowerCase();apply();});
+
+// --- 읽음 체크 / 읽은 책 목록 ---
+function updateReadCount(){ const el=document.getElementById('readCount'); if(el) el.innerHTML='📗 읽은 책 <b>'+READ.size+'</b>권'; const clr=document.getElementById('readClear'); if(clr) clr.hidden=READ.size===0; }
+[grpYuA,grpCho].forEach(gr=>gr.addEventListener('click',e=>{
+  const btn=e.target.closest('.c-read'); if(!btn)return;
+  const card=btn.closest('.card'); const t=card.dataset.title;
+  if(READ.has(t)){ READ.delete(t); card.classList.remove('is-read'); btn.setAttribute('aria-pressed','false'); btn.textContent='읽음'; }
+  else { READ.add(t); card.classList.add('is-read'); btn.setAttribute('aria-pressed','true'); btn.textContent='✓ 읽음'; }
+  saveRead(); updateReadCount(); if(fRead) apply();
+}));
+const readToggleBtn=document.getElementById('readToggle');
+readToggleBtn.addEventListener('click',()=>{ fRead=!fRead; readToggleBtn.setAttribute('aria-pressed',String(fRead)); readToggleBtn.textContent=fRead?'📚 전체 보기':'📗 읽은 책만 보기'; apply(); });
+document.getElementById('readClear').addEventListener('click',()=>{
+  if(!READ.size || !confirm('읽음 표시를 모두 해제할까요?')) return;
+  READ.clear(); saveRead();
+  document.querySelectorAll('.card.is-read').forEach(c=>{ c.classList.remove('is-read'); const b=c.querySelector('.c-read'); if(b){ b.setAttribute('aria-pressed','false'); b.textContent='읽음'; } });
+  updateReadCount(); if(fRead) apply();
+});
+
 apply();
+updateReadCount();
 
 // 권수 자동 반영 (목록이 늘어나도 숫자가 스스로 갱신됨)
 (function(){
