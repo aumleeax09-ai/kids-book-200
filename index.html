@@ -41,7 +41,7 @@
     --shadow-2:0 10px 26px rgba(223,146,112,.20), 0 20px 46px rgba(223,146,112,.16);
 
     /* 모양 & 모션 */
-    --r-sm:14px; --r:20px; --r-lg:28px;
+    --r-sm:12px; --r:18px; --r-lg:24px;
     --ease:cubic-bezier(.4,0,.2,1);
     --font:'Pretendard','Apple SD Gothic Neo','SF Pro Text',-apple-system,
            BlinkMacSystemFont,'Malgun Gothic','Noto Sans KR',system-ui,sans-serif;
@@ -140,8 +140,8 @@
   .searchbox:focus{ outline:none; border-color:var(--coral); background:#fff;
     box-shadow:0 0 0 4px var(--coral-soft); }
 
-  .fbar{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-  .flabel{ flex:0 0 auto; font-size:12.5px; font-weight:700; color:var(--text-2); }
+  .fbar{ display:flex; flex-direction:column; align-items:stretch; gap:9px; }
+  .flabel{ font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--text-3); }
   .selectbox{
     flex:1; min-width:190px; max-width:340px; padding:11px 40px 11px 15px;
     border:1.5px solid var(--border-2); border-radius:14px;
@@ -248,7 +248,8 @@
   .card.is-read .c-cover{ opacity:.7; }
   .card.is-read .c-title{ color:var(--text-2); }
   /* 읽은 책 보기 바 */
-  .readbar{ display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-wrap:wrap; }
+  .readbar{ display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-wrap:wrap;
+    padding-bottom:15px; border-bottom:1px solid var(--border); }
   .readtoggle{ appearance:none; cursor:pointer; font-family:inherit; border:1.5px solid var(--mint);
     background:#fff; color:var(--mint); font-size:13px; font-weight:800; padding:8px 16px; border-radius:999px; transition:all .2s var(--ease); }
   .readtoggle:hover{ background:var(--mint-soft); }
@@ -282,12 +283,6 @@
     <h1>유치원생·초등학생<br>추천도서 400선</h1>
     <p class="lede"><b>서점 추천</b>(교보문고·YES24·알라딘 인기 순위)과 <b>도서관 추천</b>(사서·학교도서관저널·어린이도서연구회 권장)으로 나누어, 연령과 출처별로 폭넓게 엄선했습니다.</p>
     <p class="target"><b>대상</b>유치원생(전체) · 초등학생(전체)</p>
-    <div class="stats">
-      <div class="stat"><span class="stat-n">400</span><span class="stat-l">전체 도서</span></div>
-      <div class="stat"><span class="stat-n">200</span><span class="stat-l">🏬 서점 추천</span></div>
-      <div class="stat"><span class="stat-n">200</span><span class="stat-l">📚 도서관 추천</span></div>
-      <div class="stat"><span class="stat-n">8</span><span class="stat-l">분야</span></div>
-    </div>
   </header>
 
   <div class="controls">
