@@ -445,7 +445,7 @@ function apply(){
     let okAge;
     if(fAge==='all') okAge=true;
     else if(fAge==='유아'||fAge==='초등') okAge=(c.dataset.age===fAge);
-    else { const n=+fAge; okAge=(n>=+c.dataset.agemin && n<=+c.dataset.agemax); }
+    else { const n=+fAge; const band=(n<=7?'유아':'초등'); okAge=(c.dataset.age===band && n>=+c.dataset.agemin && n<=+c.dataset.agemax); }
     const okCat=fCat==='all'||c.dataset.cat===fCat;
     const okQ=!fQ||c.dataset.search.includes(fQ);
     const okRead=!fRead||READ.has(c.dataset.title);
