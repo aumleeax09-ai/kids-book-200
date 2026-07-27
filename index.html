@@ -233,8 +233,10 @@
   .stars{ margin-left:auto; font-size:13px; letter-spacing:1px; color:var(--star); }
 
   .c-why{ margin:2px 0 0; font-size:13.5px; line-height:1.55; color:var(--text-2); }
-  .c-edu{ margin:0; padding-top:10px; border-top:1px dashed var(--border-2); font-size:12.5px; color:var(--text-3); }
-  .c-edu b{ color:var(--mint); font-weight:800; }
+  .c-edu{ margin:5px 0 0; padding:9px 12px; background:var(--mint-soft); border:1px solid var(--mint);
+    border-radius:12px; font-size:13px; font-weight:700; color:var(--text); line-height:1.5; }
+  .c-edu b{ display:inline-block; background:var(--mint); color:#fff; font-weight:800; font-size:11px;
+    letter-spacing:.02em; padding:3px 10px; border-radius:999px; margin-right:8px; vertical-align:middle; }
 
   /* 읽음 체크 */
   .c-read{ flex:0 0 auto; appearance:none; cursor:pointer; font-family:inherit;
@@ -421,7 +423,7 @@ function card(b,group,source,i){
         <span class="stars" title="인기도 ${rate}/5">${starStr(rate)}</span>
       </div>
       <p class="c-why">${why}</p>
-      <p class="c-edu"><b>교육효과</b> · ${edu}</p>
+      <p class="c-edu"><b>교육효과</b>${edu}</p>
     </div>`;
   return el;
 }
