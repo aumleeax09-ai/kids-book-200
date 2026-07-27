@@ -294,21 +294,21 @@
     <div class="fbar">
       <label class="flabel" for="ageSelect">연령 선택</label>
       <select id="ageSelect" class="selectbox" aria-label="연령 선택">
-        <option value="all">전체 연령 (만 4~12세)</option>
+        <option value="all">전체 연령 (4~12세)</option>
         <optgroup label="── 묶음으로 보기 ──">
-          <option value="유아">유치원 전체 (만 4~7세)</option>
-          <option value="초등">초등 전체 (만 8~12세)</option>
+          <option value="유아">유치원 전체 (4~7세)</option>
+          <option value="초등">초등 전체 (8~12세)</option>
         </optgroup>
-        <optgroup label="── 만 나이로 콕 집어보기 ──">
-          <option value="4">만 4세</option>
-          <option value="5">만 5세</option>
-          <option value="6">만 6세</option>
-          <option value="7">만 7세</option>
-          <option value="8">만 8세</option>
-          <option value="9">만 9세</option>
-          <option value="10">만 10세</option>
-          <option value="11">만 11세</option>
-          <option value="12">만 12세</option>
+        <optgroup label="── 나이로 콕 집어보기 ──">
+          <option value="4">4세</option>
+          <option value="5">5세</option>
+          <option value="6">6세</option>
+          <option value="7">7세</option>
+          <option value="8">8세</option>
+          <option value="9">9세</option>
+          <option value="10">10세</option>
+          <option value="11">11세</option>
+          <option value="12">12세</option>
         </optgroup>
       </select>
     </div>
@@ -321,7 +321,7 @@
 
   <section class="sec sec-yuA" id="sec-yuA">
     <div class="sec-head">
-      <h2>유치원생 추천</h2><span class="tag">유치원생(전체) · 만 4~7세</span>
+      <h2>유치원생 추천</h2><span class="tag">유치원생(전체) · 4~7세</span>
       <p>그림책·창작동화 중심으로 감정·언어·상상력을 키우는 책들.</p>
     </div>
     <div class="grid" id="grid-yuA"></div>
@@ -329,7 +329,7 @@
 
   <section class="sec sec-cho" id="sec-cho">
     <div class="sec-head">
-      <h2>초등학생 추천</h2><span class="tag">초등학생(전체) · 만 8~12세</span>
+      <h2>초등학생 추천</h2><span class="tag">초등학생(전체) · 8~12세</span>
       <p>창작동화부터 역사·과학·수학·사회, 인성 성장 문학까지 폭넓게 구성했습니다.</p>
     </div>
     <div class="grid" id="grid-cho"></div>
@@ -458,7 +458,7 @@ function apply(){
   secC.style.display=(nc>0)?'':'none';
   document.getElementById('globalEmpty').style.display=(ny+nc===0)?'':'none';
   const srcName = fSource==='store'?'🏬 서점 추천':(fSource==='lib'?'📚 도서관 추천':'서점+도서관 전체');
-  const ageName = /^\d+$/.test(fAge) ? ` · 만 ${fAge}세` : '';
+  const ageName = /^\d+$/.test(fAge) ? ` · ${fAge}세` : '';
   countEl.innerHTML=`${srcName}${ageName} · 유치원 <b>${ny}</b>권 · 초등 <b>${nc}</b>권`;
 }
 document.getElementById('srcBar').addEventListener('click',e=>{
