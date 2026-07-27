@@ -252,7 +252,7 @@
   <header class="hero">
     <p class="eyebrow">독서교육 큐레이션 · 2025–2026</p>
     <h1>유치원생·초등학생<br>추천도서 400선</h1>
-    <p class="lede"><b>서점 추천</b>(교보문고·YES24·알라딘 인기 순위)과 <b>도서관 추천</b>(사서·학교도서관저널·어린이도서연구회 권장)으로 나누어, 각 출처마다 연령별 100권씩 엄선했습니다.</p>
+    <p class="lede"><b>서점 추천</b>(교보문고·YES24·알라딘 인기 순위)과 <b>도서관 추천</b>(사서·학교도서관저널·어린이도서연구회 권장)으로 나누어, 연령과 출처별로 폭넓게 엄선했습니다.</p>
     <p class="target"><b>대상</b>유치원생(전체) · 초등학생(전체)</p>
     <div class="stats">
       <div class="stat"><span class="stat-n">400</span><span class="stat-l">전체 도서</span></div>
@@ -448,4 +448,21 @@ catWrap.addEventListener('click',e=>{
 });
 document.getElementById('q').addEventListener('input',e=>{fQ=e.target.value.trim().toLowerCase();apply();});
 apply();
+
+// 권수 자동 반영 (목록이 늘어나도 숫자가 스스로 갱신됨)
+(function(){
+  const store=BOOKS.store['유아'].length+BOOKS.store['초등'].length;
+  const lib=BOOKS.lib['유아'].length+BOOKS.lib['초등'].length;
+  const all=store+lib;
+  const sn=document.querySelectorAll('.stat-n');
+  if(sn[0])sn[0].textContent=all;
+  if(sn[1])sn[1].textContent=store;
+  if(sn[2])sn[2].textContent=lib;
+  if(sn[3])sn[3].textContent=Object.keys(CAT).length;
+  const sb=document.querySelectorAll('.srcbtn span');
+  if(sb[0])sb[0].textContent='베스트셀러 '+store+'권';
+  if(sb[1])sb[1].textContent='사서·연구회 '+lib+'권';
+  if(sb[2])sb[2].textContent=all+'권';
+  const h1=document.querySelector('h1'); if(h1)h1.innerHTML='유치원생·초등학생<br>추천도서 '+all+'선';
+})();
 </script>

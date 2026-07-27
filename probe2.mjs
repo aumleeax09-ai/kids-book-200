@@ -1,0 +1,10 @@
+const q = '이상한 과자 가게 전천당';
+const url = 'https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=Book&SearchWord=' + encodeURIComponent(q);
+const res = await fetch(url, { headers:{ 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }});
+const html = await res.text();
+const i = html.indexOf('bo3');
+console.log('bo3 index:', i);
+if (i>0) console.log(html.slice(i-60, i+220));
+console.log('--- ItemId sample ---');
+const j = html.indexOf('ItemId=');
+console.log(html.slice(j-120, j+180));
